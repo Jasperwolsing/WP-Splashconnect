@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.9.0
+- Menu-item heeft nu een zwemmer-icoon (SVG, kleurt mee met het admin-kleurenschema). Het eerdere `dashicons-swimming` bestaat niet in WordPress, waardoor er geen icoon was.
+
 ## 1.8.2
 - Paginacache (LiteSpeed, WP Rocket, W3 Total Cache, WP Super Cache, WP Fastest Cache) wordt automatisch geleegd als je Pagina-opmaak, modules, programma-tijden/-namen of sharecard-instellingen opslaat. Hiermee verschijnen wijzigingen direct voor bezoekers.
 

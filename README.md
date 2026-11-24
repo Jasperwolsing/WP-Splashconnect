@@ -34,4 +34,4 @@ Zie [CONTRIBUTING.md](CONTRIBUTING.md). Wijzigingen staan in [CHANGELOG.md](CHAN
 
 ## Licentie
 
-GPL-3.0-or-later (zie [LICENSE](LICENSE)). Meegeleverde lettertypen (DejaVu Sans, Roboto) vallen onder hun eigen licenties.
+GPL-3.0-or-later (zie [LICENSE](LICENSE)). Meegeleverde lettertypen (DejaVu Sans, Roboto) vallen onder hun eigen licenties. Het menu-icoon is gebaseerd op het Material Design-icoon "pool" (Google, Apache-2.0).
