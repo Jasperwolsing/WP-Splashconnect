@@ -38,6 +38,15 @@ class STA_Admin_Program {
         }
         update_option( 'sta_program_session_times', $session_times );
 
+        // Eigen sessienamen: leeg veld = automatische naam gebruiken.
+        $session_names = [];
+        foreach ( $_POST['sta_session_name'] ?? [] as $key => $val ) {
+            $key = sanitize_text_field( wp_unslash( $key ) );
+            $val = trim( sanitize_text_field( wp_unslash( $val ) ) );
+            if ( $val !== '' ) $session_names[ $key ] = mb_substr( $val, 0, 60 );
+        }
+        update_option( 'sta_program_session_names', $session_names );
+
         // Sla para-vinkjes op: alle keys die aangevinkt zijn
         $para_checked = array_keys( $_POST['sta_para'] ?? [] );
         $para_checked = array_map( 'sanitize_text_field', $para_checked );
@@ -74,6 +83,7 @@ class STA_Admin_Program {
             <p style="color:#666;margin-bottom:24px;">
                 Vul starttijden in zodra die bekend zijn (bijv. <code>9:00</code> of <code>20:14</code>).
                 Vink <strong>P</strong> aan voor events met een Paralympische finale.
+                Geef een sessie een eigen <strong>naam</strong> (bijv. "Ochtendsessie"); laat het veld leeg voor de automatische naam.
             </p>
 
             <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -109,6 +119,16 @@ class STA_Admin_Program {
                                         padding:3px 10px;
                                         border-radius:50px;
                                     "><?php echo esc_html( $session['label'] ); ?></div>
+                                    <label style="font-size:12px;color:#555;display:flex;align-items:center;gap:6px;">
+                                        Naam:
+                                        <input type="text"
+                                               name="sta_session_name[<?php echo esc_attr( $sess_tkey ); ?>]"
+                                               value="<?php echo esc_attr( ! empty( $session['label_custom'] ) ? $session['label'] : '' ); ?>"
+                                               placeholder="<?php echo esc_attr( $session['label_default'] ?? $session['label'] ); ?>"
+                                               maxlength="60"
+                                               title="Laat leeg voor de automatische naam"
+                                               style="width:110px;padding:3px 6px;border:1px solid #ccc;border-radius:4px;font-size:12px;">
+                                    </label>
                                     <label style="font-size:12px;color:#555;display:flex;align-items:center;gap:6px;">
                                         Sessie starttijd:
                                         <input type="text"

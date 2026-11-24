@@ -14,6 +14,7 @@ class STA_Program {
         $manual_times  = get_option( 'sta_program_times', [] );      // set by admin per event
         $session_times = get_option( 'sta_program_session_times', [] );
         $para_checked  = get_option( 'sta_program_para', null );
+        $session_names = get_option( 'sta_program_session_names', [] ); // eigen sessienamen per sessie-sleutel
 
         $api_data = get_option( 'sta_swimrankings_program', [] );
         $program  = self::from_api_import( $api_data );
@@ -21,6 +22,14 @@ class STA_Program {
         foreach ( $program as &$e ) {
             $key      = self::event_key( $e );
             $sess_key = self::session_key( $e );
+
+            // Eigen sessienaam (Programma-admin): vervangt het automatische label overal.
+            $e['session_label_default'] = $e['session_label'] ?? '';
+            $e['session_label_custom']  = false;
+            if ( ! empty( $session_names[ $sess_key ] ) ) {
+                $e['session_label']        = (string) $session_names[ $sess_key ];
+                $e['session_label_custom'] = true;
+            }
 
             // Auto-times (bc/a finals derived from heat scheduling): approx_time only
             if ( isset( $auto_times[ $key ] ) && $auto_times[ $key ] !== '' ) {
@@ -488,6 +497,8 @@ class STA_Program {
                 $sort_key   = ( $e['approx_time'] ?: '99:99' ) . '|' . ( $slug_order[ $slug ] ?? '0' );
                 $out[ $date ]['sessions'][ $sess_id ] = [
                     'label'       => $e['session_label'],
+                    'label_default' => $e['session_label_default'] ?? $e['session_label'],
+                    'label_custom'  => ! empty( $e['session_label_custom'] ),
                     'approx_time' => $e['approx_time'],
                     'slug'        => $slug,
                     'sort_key'    => $sort_key,

@@ -430,7 +430,8 @@ $_color       = esc_attr( $_s['primary_color'] ?? '#13315c' );
                     }
                     $result_blocks[ $block_key ] = [
                         'date'          => $pe['date'],
-                        'session_label' => $af_started ? $pe['session_label'] : 'B/C Finals',
+                        'session_label' => ( $af_started || ! empty( $pe['session_label_custom'] ) ) ? $pe['session_label'] : 'B/C Finals',
+                        'custom_label'  => ! empty( $pe['session_label_custom'] ),
                         'slug'          => $display_slug,
                         'gender_label'  => $gender_label,
                         'gender_icon'   => $gender_icon,
@@ -629,7 +630,7 @@ $_color       = esc_attr( $_s['primary_color'] ?? '#13315c' );
                     <span class="sta-live-dot" style="display:none;width:8px;height:8px;border-radius:50%;background:#e74c3c;flex-shrink:0;animation:staPulse 1.4s infinite;"></span>
                     <span><?php echo esc_html( trim( $block['gender_icon'] . ' ' . $block['gender_label'] ) ); ?></span>
                     <span style="opacity:.8;">·</span>
-                    <span><?php echo esc_html( $block['slug'] === 'a_finals' ? 'Finals' : $block['session_label'] ); ?></span>
+                    <span><?php echo esc_html( ( $block['slug'] === 'a_finals' && empty( $block['custom_label'] ) ) ? 'Finals' : $block['session_label'] ); ?></span>
                     <span style="font-weight:400;opacity:.7;font-size:12px;"><?php echo esc_html( $day_str ); ?></span>
                     <button class="sta-toggle-btn" onclick="event.stopPropagation();staToggleBlock(this.closest('.sta-result-block').querySelector('[onclick]'))" style="margin-left:auto;background:none;border:none;color:#fff;font-size:14px;cursor:pointer;padding:0;line-height:1;"><?php echo $collapsed ? '▼' : '▲'; ?></button>
                 </div>

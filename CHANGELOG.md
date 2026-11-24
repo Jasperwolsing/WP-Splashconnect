@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.0
+- Programma: sessienamen zijn aan te passen (veld "Naam" per sessie; leeg = automatische naam). De eigen naam wordt overal getoond: programma-shortcode, afstandspagina (ook bij de uitslagenblokken), atleetpagina en uitslagen.
+
 ## 1.5.0
 - Overzicht: kaart "Standaardpagina's" toont of Clubs (`/clubs/`) en Programma (`[sta_program]`) bestaan en maakt ontbrekende pagina's aan met één knop. Bestaande pagina's worden nooit gewijzigd.
 
