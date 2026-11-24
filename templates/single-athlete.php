@@ -60,11 +60,13 @@ $countries = array(
 );
 ?>
 
+<?php if ( STA_Templates::show_header() ) : ?>
 <div class="athlete-header-image" style="
     width:100%;
     height:<?php echo $_header_h; ?>px;
     <?php if ($_header_url): ?>background-image:url('<?php echo esc_url($_header_url); ?>');background-size:cover;background-position:center;<?php else: ?>background-color:<?php echo esc_attr($_layout['primary_color']); ?>;<?php endif; ?>
 "></div>
+<?php endif; ?>
 
 <main id="primary" class="site-main">
 

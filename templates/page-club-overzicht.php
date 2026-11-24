@@ -53,11 +53,13 @@ usort( $club_terms, function( $a, $b ) use ( $club_medals ) {
 } );
 ?>
 
+<?php if ( STA_Templates::show_header() ) : ?>
 <div style="
     width:100%;height:<?php echo (int) $s['header_height']; ?>px;
     <?php if ( $header_url ) : ?>background-image:url('<?php echo esc_url( $header_url ); ?>');background-size:cover;background-position:center;
     <?php else : ?>background-color:<?php echo $color; ?>;<?php endif; ?>
 "></div>
+<?php endif; ?>
 
 <main id="primary" class="site-main">
 <div class="container" style="max-width:900px;margin:0 auto;padding:50px 20px 80px;">

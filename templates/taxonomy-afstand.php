@@ -10,6 +10,7 @@ $_header_h    = (int)( $_s['header_height'] ?? 220 );
 $_color       = esc_attr( $_s['primary_color'] ?? '#13315c' );
 ?>
 
+<?php if ( STA_Templates::show_header() ) : ?>
 <div class="athlete-header-image" style="
     width:100%;
     height:<?php echo $_header_h; ?>px;
@@ -21,6 +22,7 @@ $_color       = esc_attr( $_s['primary_color'] ?? '#13315c' );
     background-color:<?php echo $_color; ?>;
     <?php endif; ?>
 "></div>
+<?php endif; ?>
 
 <main id="primary" class="site-main">
 

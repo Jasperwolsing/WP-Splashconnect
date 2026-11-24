@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.0
+- Pagina-opmaak → Header: nieuwe optie "Headerbalk tonen bovenaan de pagina's" (standaard aan). Uit = geen blauwe balk/afbeelding op atleten-, afstands-, club- en clubs-overzichtspagina's.
+
 ## 1.6.0
 - Programma: sessienamen zijn aan te passen (veld "Naam" per sessie; leeg = automatische naam). De eigen naam wordt overal getoond: programma-shortcode, afstandspagina (ook bij de uitslagenblokken), atleetpagina en uitslagen.
 

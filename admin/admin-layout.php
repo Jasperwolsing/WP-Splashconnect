@@ -24,6 +24,8 @@ class STA_Admin_Layout {
     public static function sanitize($input): array {
         $clean = [];
         $clean['primary_color']    = sanitize_hex_color($input['primary_color'] ?? '#13315c') ?: '#13315c';
+        // Ontbreekt de sleutel (bv. opslag buiten het formulier), dan blijft de balk zichtbaar.
+        $clean['show_header']      = array_key_exists('show_header', (array) $input) ? (empty($input['show_header']) ? 0 : 1) : 1;
         $clean['header_image_id']  = absint($input['header_image_id'] ?? 0);
         $clean['header_height']    = max(80, min(600, absint($input['header_height'] ?? 220)));
         $clean['flag_shape']       = in_array($input['flag_shape'] ?? '', ['circle', 'rounded', 'square']) ? $input['flag_shape'] : 'circle';
@@ -86,6 +88,13 @@ class STA_Admin_Layout {
 
                         <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:20px;margin-bottom:16px;">
                             <h3 style="margin-top:0;">Header</h3>
+
+                            <input type="hidden" name="sta_layout[show_header]" value="0">
+                            <label style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-weight:600;font-size:13px;">
+                                <input type="checkbox" name="sta_layout[show_header]" value="1" <?php checked( ! array_key_exists( 'show_header', (array) $s ) || ! empty( $s['show_header'] ) ); ?>>
+                                Headerbalk tonen bovenaan de pagina's
+                            </label>
+                            <p class="description" style="margin:-8px 0 14px;">Geldt voor atleten, afstanden, clubs en het clubs-overzicht.</p>
 
                             <label style="display:block;margin-bottom:6px;font-weight:600;font-size:13px;">Afbeelding</label>
                             <input type="hidden" name="sta_layout[header_image_id]" id="sta-header-img-id" value="<?php echo $s['header_image_id']; ?>">

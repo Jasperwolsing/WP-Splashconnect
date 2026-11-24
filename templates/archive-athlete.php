@@ -74,6 +74,7 @@ foreach ($groups as &$group) {
 unset($group);
 ?>
 
+<?php if ( STA_Templates::show_header() ) : ?>
 <div class="athlete-header-image" style="
     width:100%;
     height:<?php echo (int)$s['header_height']; ?>px;
@@ -85,6 +86,7 @@ unset($group);
     background-color:<?php echo $color; ?>;
     <?php endif; ?>
 "></div>
+<?php endif; ?>
 
 <main id="primary" class="site-main">
     <div class="container" style="max-width:1000px;margin:0 auto;padding:50px 20px 80px;">

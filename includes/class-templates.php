@@ -22,6 +22,12 @@ class STA_Templates {
         add_filter( 'theme_page_templates', [ __CLASS__, 'page_templates' ] );
     }
 
+    /** Toon de headerbalk bovenaan de sjablonen? (Pagina-opmaak → Header; standaard aan.) */
+    public static function show_header(): bool {
+        $s = get_option( 'sta_layout', [] );
+        return ! is_array( $s ) || ! array_key_exists( 'show_header', $s ) || (bool) $s['show_header'];
+    }
+
     public static function page_templates( array $templates ): array {
         $templates[ self::PAGE_CLUB ] = 'Club overzicht';
         return $templates;
