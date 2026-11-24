@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.1
+- Geschiedenis en releases opgeschoond na het verwijderen van de vaste Heroshot-sleutel; geen functionele wijzigingen t.o.v. 1.3.0.
+
 ## 1.3.0
 - Sjablonen worden nu door de plugin zelf geladen (map `templates/`): atleetpagina, atletenoverzicht, afstandspagina (`/afstand/...`), clubpagina (`/club/...`) en paginasjabloon "Club overzicht". Een bestand met dezelfde naam in het (child)thema blijft voorrang houden.
 - Beveiliging: de vaste Heroshot-HMAC-sleutel is uit de code gehaald. Stel `STA_HEROSHOT_SECRET` in via wp-config.php (of optie `sta_heroshot_secret`).
