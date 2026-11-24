@@ -356,6 +356,7 @@ class STA_Featured_Ticker {
             ?>
                 <a href="<?php echo get_permalink( $athlete->ID ); ?>" class="sta-featured-card">
 
+                    <?php if ( STA_Modules::is_active( 'photos' ) ) : ?>
                     <div class="sta-featured-photo">
                         <?php if ( has_post_thumbnail( $athlete->ID ) ) : ?>
                             <?php echo get_the_post_thumbnail( $athlete->ID, 'medium', [
@@ -365,6 +366,7 @@ class STA_Featured_Ticker {
                             <span style="font-size:36px;opacity:.3;">🏊</span>
                         <?php endif; ?>
                     </div>
+                    <?php endif; ?>
 
                     <div class="sta-featured-meta">
                         <?php

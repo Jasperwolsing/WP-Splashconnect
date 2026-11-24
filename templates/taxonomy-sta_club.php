@@ -126,13 +126,13 @@ $total_medals = $medals[1] + $medals[2] + $medals[3];
             ?>
                 <a href="<?php echo get_permalink( $athlete->ID ); ?>" style="text-decoration:none;color:inherit;display:block;background:<?php echo $card_bg; ?>;border:1px solid #e5e7eb;border-radius:<?php echo $card_radius; ?>px;overflow:hidden;transition:box-shadow .15s;"
                    onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.1)'" onmouseout="this.style.boxShadow='none'">
-                    <?php if ( has_post_thumbnail( $athlete->ID ) ) : ?>
+                    <?php if ( STA_Modules::is_active( 'photos' ) && has_post_thumbnail( $athlete->ID ) ) : ?>
                     <div style="aspect-ratio:<?php echo $ratio; ?>;overflow:hidden;">
                         <?php echo get_the_post_thumbnail( $athlete->ID, 'medium', [
                             'style' => 'width:100%;height:100%;object-fit:cover;display:block;' . sta_focus_style( $athlete->ID ),
                         ] ); ?>
                     </div>
-                    <?php else : ?>
+                    <?php elseif ( STA_Modules::is_active( 'photos' ) ) : ?>
                     <div style="aspect-ratio:<?php echo $ratio; ?>;background:#e5e7eb;display:flex;align-items:center;justify-content:center;">
                         <span style="font-size:40px;opacity:.3;">🏊</span>
                     </div>

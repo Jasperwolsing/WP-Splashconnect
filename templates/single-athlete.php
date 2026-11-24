@@ -179,7 +179,7 @@ $countries = array(
                     </div>
                     <?php endif; ?>
 
-                    <?php if ( has_post_thumbnail() ) : ?>
+                    <?php if ( STA_Modules::is_active( 'photos' ) && has_post_thumbnail() ) : ?>
 
                         <div class="athlete-portrait" style="
                             margin:0 auto 35px;
@@ -634,7 +634,7 @@ $countries = array(
 
                 <?php
         $tournament_tag    = get_option( 'sta_tournament_tag', '' );
-        $tournament_photos = $tournament_tag ? get_post_meta( get_the_ID(), 'sta_tournament_photos', true ) : [];
+        $tournament_photos = ( $tournament_tag && STA_Modules::is_active( 'photos' ) ) ? get_post_meta( get_the_ID(), 'sta_tournament_photos', true ) : [];
         if ( ! empty( $tournament_photos ) ) :
             $photographer = get_option( 'sta_flickr_photographer', '' );
             $athlete_name    = get_the_title();
@@ -683,7 +683,7 @@ $countries = array(
             $sta_layout       = get_option('sta_layout', []);
             $sta_contact_url  = $sta_layout['contact_url'] ?? '';
             $sta_contact_text = $sta_layout['contact_text'] ?? '';
-            $sta_contact_default = "The photo and biography on this page were generated automatically. Spotted a mistake or have something to add?\nFeel free to send us a message.";
+            $sta_contact_default = ( STA_Modules::is_active( 'photos' ) ? 'The photo and biography' : 'The biography' ) . " on this page were generated automatically. Spotted a mistake or have something to add?\nFeel free to send us a message.";
             $sta_contact_display = $sta_contact_text ?: $sta_contact_default;
             if ( $sta_contact_url || $sta_contact_text ) : ?>
             <p style="

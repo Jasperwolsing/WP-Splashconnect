@@ -170,13 +170,13 @@ unset($group);
                        onmouseout="this.style.boxShadow='<?php echo $featured ? '0 0 0 2px ' . $color : 'none'; ?>'"
                     >
 
-                        <?php if (has_post_thumbnail($athlete->ID)) : ?>
+                        <?php if ( STA_Modules::is_active( 'photos' ) && has_post_thumbnail( $athlete->ID ) ) : ?>
                             <div class="sta-athlete-card-img" style="aspect-ratio:<?php echo $ratio; ?>;overflow:hidden;">
                                 <?php echo get_the_post_thumbnail($athlete->ID, 'medium', [
                                     'style' => 'width:100%;height:100%;object-fit:cover;display:block;' . sta_focus_style($athlete->ID),
                                 ]); ?>
                             </div>
-                        <?php else : ?>
+                        <?php elseif ( STA_Modules::is_active( 'photos' ) ) : ?>
                             <div class="sta-athlete-card-img" style="aspect-ratio:<?php echo $ratio; ?>;background:#e5e7eb;display:flex;align-items:center;justify-content:center;">
                                 <span style="font-size:48px;opacity:.3;">🏊</span>
                             </div>

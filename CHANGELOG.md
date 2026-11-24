@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.1
+- Foto-integratie uit: foto's en placeholders (🏊) worden nergens meer getoond: afstandspagina, atletenoverzicht, clubpagina, atleetpagina (incl. toernooifoto's) en de uitgelichte-atleten-ticker. De standaardtekst onderaan de atleetpagina noemt dan alleen de bio.
+
 ## 1.4.0
 - Heroshot: de map voor `videos/` en `data/` is instelbaar bij Instellingen → Heroshot (standaard `DQR2026`), met statuscontrole. Vaste mappen `DQR2026/` en `EST2026/` zijn uit de code.
 - Video op de atletenpagina verschijnt alleen als de Heroshot-module aan staat.

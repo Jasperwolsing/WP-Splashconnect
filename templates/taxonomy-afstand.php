@@ -1060,13 +1060,13 @@ $_color       = esc_attr( $_s['primary_color'] ?? '#13315c' );
                         " onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.1)'"
                            onmouseout="this.style.boxShadow='<?php echo $featured ? '0 0 0 2px #13315C' : 'none'; ?>'">
 
-                            <?php if ( has_post_thumbnail( $athlete->ID ) ) : ?>
+                            <?php if ( STA_Modules::is_active( 'photos' ) && has_post_thumbnail( $athlete->ID ) ) : ?>
                                 <div class="sta-athlete-card-img" style="aspect-ratio:3/4;overflow:hidden;">
                                     <?php echo get_the_post_thumbnail( $athlete->ID, 'medium', [
                                         'style' => 'width:100%;height:100%;object-fit:cover;display:block;' . sta_focus_style( $athlete->ID ),
                                     ] ); ?>
                                 </div>
-                            <?php else : ?>
+                            <?php elseif ( STA_Modules::is_active( 'photos' ) ) : ?>
                                 <div class="sta-athlete-card-img" style="aspect-ratio:3/4;background:#e5e7eb;display:flex;align-items:center;justify-content:center;">
                                     <span style="font-size:48px;opacity:.3;">🏊</span>
                                 </div>
