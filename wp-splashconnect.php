@@ -20,6 +20,10 @@ define( 'STA_VERSION', '1.1.0' );
 define( 'STA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'STA_URL', plugin_dir_url( __FILE__ ) );
 
+// Updates via GitHub Releases (alleen relevant in de admin en tijdens cron).
+require_once STA_DIR . 'includes/class-github-updater.php';
+STA_GitHub_Updater::init( __FILE__ );
+
 require_once STA_DIR . 'includes/class-cpt-athlete.php';
 require_once STA_DIR . 'includes/class-featured-ticker.php';
 require_once STA_DIR . 'includes/class-pdf-importer.php';

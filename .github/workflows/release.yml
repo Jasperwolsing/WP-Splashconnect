@@ -1,0 +1,40 @@
+name: Release
+
+# Bij het pushen van een tag zoals v1.1.0 wordt een zip gebouwd en als GitHub Release gepubliceerd.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Controleer dat tag en pluginversie overeenkomen
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          HEADER=$(grep -m1 -E '^\s*\*\s*Version:' wp-splashconnect.php | sed -E 's/.*Version:\s*//; s/\s+$//')
+          CONST=$(grep -m1 "define( 'STA_VERSION'" wp-splashconnect.php | sed -E "s/.*'STA_VERSION', '([^']+)'.*/\1/")
+          echo "tag=$TAG header=$HEADER const=$CONST"
+          [ "$TAG" = "$HEADER" ] && [ "$TAG" = "$CONST" ] || { echo "Versie komt niet overeen met de tag"; exit 1; }
+
+      - name: PHP-syntaxis controleren
+        run: |
+          sudo apt-get install -y php-cli >/dev/null
+          find . -name '*.php' -print0 | xargs -0 -n1 php -l >/dev/null
+
+      - name: Zip bouwen (map wp-splashconnect/)
+        run: git archive --format=zip --prefix=wp-splashconnect/ -o wp-splashconnect.zip HEAD
+
+      - name: Release publiceren
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" wp-splashconnect.zip \
+            --title "WP Splashconnect ${GITHUB_REF_NAME#v}" \
+            --generate-notes
