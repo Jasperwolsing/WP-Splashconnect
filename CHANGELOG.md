@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.7.1
+- Updater: een verouderd "nieuwe versie beschikbaar"-bericht voor de reeds geïnstalleerde versie (bijv. na handmatig uploaden) wordt niet meer getoond.
+
 ## 1.7.0
 - Pagina-opmaak → Header: nieuwe optie "Headerbalk tonen bovenaan de pagina's" (standaard aan). Uit = geen blauwe balk/afbeelding op atleten-, afstands-, club- en clubs-overzichtspagina's.
 

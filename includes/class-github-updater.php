@@ -28,6 +28,22 @@ class STA_GitHub_Updater {
         add_filter( 'plugins_api',                           [ __CLASS__, 'plugin_info' ], 10, 3 );
         add_filter( 'upgrader_source_selection',             [ __CLASS__, 'fix_folder_name' ], 10, 4 );
         add_action( 'upgrader_process_complete',            [ __CLASS__, 'clear_cache' ], 10, 0 );
+        // Bij het lezen: een verouderd "update beschikbaar" voor de reeds geïnstalleerde versie opruimen.
+        add_filter( 'site_transient_update_plugins',         [ __CLASS__, 'drop_stale_update' ] );
+    }
+
+    /**
+     * Na een handmatige upload (zip) of update blijft het oude bericht soms in WordPress' update-cache staan
+     * ("1.6.0 beschikbaar" terwijl 1.6.0 al is geïnstalleerd). Geen netwerkverkeer; alleen vergelijken.
+     */
+    public static function drop_stale_update( $transient ) {
+        if ( is_object( $transient ) && isset( $transient->response[ self::$plugin_file ] ) ) {
+            $new = $transient->response[ self::$plugin_file ]->new_version ?? '';
+            if ( $new === '' || version_compare( (string) $new, STA_VERSION, '<=' ) ) {
+                unset( $transient->response[ self::$plugin_file ] );
+            }
+        }
+        return $transient;
     }
 
     /** Laatste release ophalen (gecachet). Geeft null bij fouten of geen release. */
