@@ -9,6 +9,18 @@ class STA_Admin_Heroshot {
         add_action('wp_ajax_sta_heroshot_track',         [__CLASS__, 'ajax_track']);
     }
 
+    /**
+     * Geheime sleutel voor de HMAC van Heroshot-bestandsnamen.
+     * Instellen via wp-config.php:  define( 'STA_HEROSHOT_SECRET', '...' );
+     * of via de optie sta_heroshot_secret. Staat bewust NIET in de code (publieke repo).
+     */
+    public static function secret(): string {
+        if ( defined( 'STA_HEROSHOT_SECRET' ) && STA_HEROSHOT_SECRET ) {
+            return (string) STA_HEROSHOT_SECRET;
+        }
+        return (string) get_option( 'sta_heroshot_secret', '' );
+    }
+
     public static function ajax_track(): void {
         $action = sanitize_key( $_POST['track_action'] ?? '' );
         $hash   = sanitize_text_field( $_POST['hash'] ?? '' );
@@ -29,6 +41,11 @@ class STA_Admin_Heroshot {
     public static function ajax_link_athletes(): void {
         check_ajax_referer('sta_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_send_json_error('Geen toegang.');
+
+        $secret = self::secret();
+        if ($secret === '') {
+            wp_send_json_error("Geen Heroshot-sleutel ingesteld. Voeg toe aan wp-config.php: define( 'STA_HEROSHOT_SECRET', 'een-lange-willekeurige-tekst' );");
+        }
 
         $data_dir = ABSPATH . 'DQR2026/data/';
         if (!is_dir($data_dir) && !mkdir($data_dir, 0755, true)) {
@@ -55,7 +72,7 @@ class STA_Admin_Heroshot {
             $name    = $row['post_title'];
             $wp_url  = get_permalink($post_id);
             $file    = $data_dir . $meet_id . '.json';
-            $hmac    = hash_hmac('sha256', $meet_id, 'REDACTED');
+            $hmac    = hash_hmac('sha256', $meet_id, $secret);
 
             $existing = is_file($file) ? (json_decode(file_get_contents($file), true) ?: []) : [];
 

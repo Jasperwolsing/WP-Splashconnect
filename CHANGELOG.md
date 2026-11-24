@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+- Sjablonen worden nu door de plugin zelf geladen (map `templates/`): atleetpagina, atletenoverzicht, afstandspagina (`/afstand/...`), clubpagina (`/club/...`) en paginasjabloon "Club overzicht". Een bestand met dezelfde naam in het (child)thema blijft voorrang houden.
+- Beveiliging: de vaste Heroshot-HMAC-sleutel is uit de code gehaald. Stel `STA_HEROSHOT_SECRET` in via wp-config.php (of optie `sta_heroshot_secret`).
+- Heroshot-video-URL gebruikt het domein van de site in plaats van een vast domein.
+- Verouderd `taxonomy-afstand.php` uit de pluginroot verwijderd.
+
 ## 1.2.0
 - Nieuwe hoofdpagina **Overzicht** met aan/uit-schakelaars per module.
 - Optionele modules: Foto-integratie, Heroshot video, Share card, Livestream, Naam opnamen, Speakers. Uitgeschakeld = uit het menu en geen hooks, AJAX of shortcodes.
