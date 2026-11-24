@@ -44,7 +44,7 @@ class STA_Admin_Heroshot {
 
         $secret = self::secret();
         if ($secret === '') {
-            wp_send_json_error("Geen Heroshot-sleutel ingesteld. Voeg toe aan wp-config.php: define( 'STA_HEROSHOT_SECRET', 'een-lange-willekeurige-tekst' );");
+            wp_send_json_error('Geen Heroshot-sleutel ingesteld. Vul hem in bij WP Splashconnect → Instellingen → Heroshot.');
         }
 
         $data_dir = ABSPATH . 'DQR2026/data/';

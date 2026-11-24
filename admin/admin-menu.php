@@ -78,7 +78,16 @@ class STA_Admin_Menu {
             register_setting( 'sta_settings', 'sta_flickr_api_key',      [ 'sanitize_callback' => 'sanitize_text_field' ] );
             register_setting( 'sta_settings', 'sta_flickr_username',    [ 'sanitize_callback' => 'sanitize_text_field', 'default' => 'kjvoverbeeke' ] );
         }
-        register_setting( 'sta_settings', 'sta_serper_api_key',    [ 'sanitize_callback' => 'sanitize_text_field' ] );
+        // Heroshot-sleutel: alleen met module aan; leeg veld behoudt de bestaande waarde (veld wordt nooit voorgevuld).
+        if ( STA_Modules::is_active( 'heroshot' ) && ! ( defined( 'STA_HEROSHOT_SECRET' ) && STA_HEROSHOT_SECRET ) ) {
+            register_setting( 'sta_settings', 'sta_heroshot_secret', [
+                'sanitize_callback' => function ( $value ) {
+                    $value = trim( sanitize_text_field( (string) $value ) );
+                    return $value !== '' ? $value : (string) get_option( 'sta_heroshot_secret', '' );
+                },
+            ] );
+        }
+        register_setting( 'sta_settings', 'sta_serper_api_key',   [ 'sanitize_callback' => 'sanitize_text_field' ] );
         register_setting( 'sta_settings', 'sta_bio_prompt',        [ 'sanitize_callback' => 'sanitize_textarea_field' ] );
         register_setting( 'sta_settings', 'sta_fallback_photo_m',  [ 'sanitize_callback' => 'absint' ] );
         register_setting( 'sta_settings', 'sta_fallback_photo_f',  [ 'sanitize_callback' => 'absint' ] );
@@ -635,6 +644,30 @@ class STA_Admin_Menu {
                         </tr>
                     </table>
                 </div>
+
+                <?php if ( STA_Modules::is_active( 'heroshot' ) ) :
+                    $hs_const = defined( 'STA_HEROSHOT_SECRET' ) && STA_HEROSHOT_SECRET;
+                    $hs_set   = $hs_const || get_option( 'sta_heroshot_secret', '' ) !== '';
+                    ?>
+                <div class="sta-card">
+                    <h2>Heroshot</h2>
+                    <table class="form-table">
+                        <tr>
+                            <th><label for="sta_heroshot_secret">Heroshot-sleutel</label></th>
+                            <td>
+                                <?php if ( $hs_const ) : ?>
+                                    <p><strong>Ingesteld via wp-config.php</strong> (<code>STA_HEROSHOT_SECRET</code>). Dit veld is dan niet nodig.</p>
+                                <?php else : ?>
+                                    <input type="password" id="sta_heroshot_secret" name="sta_heroshot_secret"
+                                           value="" class="regular-text" autocomplete="new-password"
+                                           placeholder="<?php echo $hs_set ? '•••••••• (ingesteld, leeg laten om te behouden)' : 'Nog niet ingesteld'; ?>">
+                                    <p class="description">Geheime tekst waarmee de bestandsnamen van Heroshot-video's worden afgeleid. Kies een lange, willekeurige tekst en bewaar hem veilig. <strong>Wijzig je hem, draai dan opnieuw "Atleten koppelen" en hernoem de bestaande video's</strong>, anders vinden atleten hun video niet meer.</p>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <?php endif; ?>
 
                 <div class="sta-card">
                     <h2>Bio-prompt</h2>

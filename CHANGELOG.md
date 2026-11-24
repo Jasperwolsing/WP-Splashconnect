@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.2
+- Heroshot-sleutel is nu in te vullen bij Instellingen → Heroshot (wachtwoordveld, nooit voorgevuld; leeg laten behoudt de waarde). `STA_HEROSHOT_SECRET` in wp-config.php blijft voorrang houden.
+
 ## 1.3.1
 - Geschiedenis en releases opgeschoond na het verwijderen van de vaste Heroshot-sleutel; geen functionele wijzigingen t.o.v. 1.3.0.
 
