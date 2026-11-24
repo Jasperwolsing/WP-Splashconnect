@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.8.2
+- Paginacache (LiteSpeed, WP Rocket, W3 Total Cache, WP Super Cache, WP Fastest Cache) wordt automatisch geleegd als je Pagina-opmaak, modules, programma-tijden/-namen of sharecard-instellingen opslaat. Hiermee verschijnen wijzigingen direct voor bezoekers.
+
 ## 1.8.1
 - Updater betrouwbaarder: terugval op de website-redirect als de GitHub-API de aanvraag weigert (rate limit op gedeelde hosting), cache van 6 naar 1 uur, "Opnieuw controleren" in WordPress leegt nu ook de plugin-cache, en in de pluginlijst staat de link **Controleer op updates**.
 
