@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.ttf binary
+
+# Niet meenemen in release-zips (git archive)
+.gitattributes export-ignore
+.gitignore export-ignore
+CONTRIBUTING.md export-ignore
+.github export-ignore
