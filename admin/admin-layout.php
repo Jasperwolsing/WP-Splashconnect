@@ -39,6 +39,17 @@ class STA_Admin_Layout {
         $clean['club_badge_radius'] = max(0, min(50, absint($input['club_badge_radius'] ?? 16)));
         $clean['dist_badge_bg']     = sanitize_hex_color($input['dist_badge_bg'] ?? '#0d2d63') ?: '#0d2d63';
         $clean['dist_badge_radius'] = max(0, min(50, absint($input['dist_badge_radius'] ?? 50)));
+        // Profielpagina: naam, vlag, landnaam en deel-knop
+        $clean['name_badge_color']  = sanitize_hex_color($input['name_badge_color'] ?? '#ffffff') ?: '#ffffff';
+        $clean['name_badge_size']   = max(14, min(80, absint($input['name_badge_size'] ?? 34)));
+        $clean['flag_profile_size'] = max(16, min(120, absint($input['flag_profile_size'] ?? 46)));
+        $clean['country_show']      = empty($input['country_show']) ? 0 : 1;
+        $clean['country_color']     = sanitize_hex_color($input['country_color'] ?? '#555555') ?: '#555555';
+        $clean['country_size']      = max(12, min(90, absint($input['country_size'] ?? 44)));
+        $clean['share_btn_bg']      = sanitize_hex_color($input['share_btn_bg'] ?? '#13315c') ?: '#13315c';
+        $clean['share_btn_color']   = sanitize_hex_color($input['share_btn_color'] ?? '#ffffff') ?: '#ffffff';
+        $clean['share_btn_radius']  = max(0, min(50, absint($input['share_btn_radius'] ?? 50)));
+        $clean['share_btn_text']    = mb_substr(sanitize_text_field($input['share_btn_text'] ?? ''), 0, 40);
         $contact_raw = $input['contact_url'] ?? '';
         $contact_pid = absint($contact_raw);
         $clean['contact_url']  = $contact_pid ? get_permalink($contact_pid) : esc_url_raw($contact_raw);
@@ -66,6 +77,16 @@ class STA_Admin_Layout {
             'dist_badge_radius' => 50,
             'contact_url'       => '',
             'contact_text'      => '',
+            'name_badge_color'  => '#ffffff',
+            'name_badge_size'   => 34,
+            'flag_profile_size' => 46,
+            'country_show'      => 1,
+            'country_color'     => '#555555',
+            'country_size'      => 44,
+            'share_btn_bg'      => '#13315c',
+            'share_btn_color'   => '#ffffff',
+            'share_btn_radius'  => 50,
+            'share_btn_text'    => '',
         ];
         $s = array_merge($def, $s);
 
@@ -145,6 +166,12 @@ class STA_Admin_Layout {
                                 </label>
                                 <?php endforeach; ?>
                             </div>
+
+                            <label style="display:block;margin-top:14px;margin-bottom:4px;font-weight:600;font-size:13px;">Grootte op profielpagina (px)</label>
+                            <input type="range" name="sta_layout[flag_profile_size]" min="16" max="120"
+                                   value="<?php echo (int) $s['flag_profile_size']; ?>" style="width:100%;"
+                                   oninput="document.getElementById('sta-flag-size-val').textContent=this.value">
+                            <span id="sta-flag-size-val"><?php echo (int) $s['flag_profile_size']; ?></span>px
                         </div>
 
                         <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:20px;margin-bottom:16px;">
@@ -183,6 +210,59 @@ class STA_Admin_Layout {
                                    value="<?php echo $s['name_badge_radius']; ?>" min="0" max="50"
                                    style="width:100%;" oninput="document.getElementById('sta-badge-radius-val').textContent=this.value;updatePreview()">
                             <span id="sta-badge-radius-val"><?php echo $s['name_badge_radius']; ?></span>px
+
+                            <label style="display:block;margin-top:12px;margin-bottom:4px;font-weight:600;font-size:13px;">Tekstkleur</label>
+                            <input type="color" name="sta_layout[name_badge_color]"
+                                   value="<?php echo esc_attr($s['name_badge_color']); ?>">
+
+                            <label style="display:block;margin-top:12px;margin-bottom:4px;font-weight:600;font-size:13px;">Tekstgrootte (px)</label>
+                            <input type="range" name="sta_layout[name_badge_size]" min="14" max="80"
+                                   value="<?php echo (int) $s['name_badge_size']; ?>" style="width:100%;"
+                                   oninput="document.getElementById('sta-name-size-val').textContent=this.value">
+                            <span id="sta-name-size-val"><?php echo (int) $s['name_badge_size']; ?></span>px
+                        </div>
+
+                        <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:20px;margin-bottom:16px;">
+                            <h3 style="margin-top:0;">Landnaam (profielpagina)</h3>
+
+                            <input type="hidden" name="sta_layout[country_show]" value="0">
+                            <label style="display:flex;align-items:center;gap:8px;margin-bottom:12px;font-weight:600;font-size:13px;">
+                                <input type="checkbox" name="sta_layout[country_show]" value="1" <?php checked(!empty($s['country_show'])); ?>>
+                                Landnaam tonen naast de naam
+                            </label>
+
+                            <label style="display:block;margin-bottom:4px;font-weight:600;font-size:13px;">Tekstkleur</label>
+                            <input type="color" name="sta_layout[country_color]"
+                                   value="<?php echo esc_attr($s['country_color']); ?>">
+
+                            <label style="display:block;margin-top:12px;margin-bottom:4px;font-weight:600;font-size:13px;">Tekstgrootte (px)</label>
+                            <input type="range" name="sta_layout[country_size]" min="12" max="90"
+                                   value="<?php echo (int) $s['country_size']; ?>" style="width:100%;"
+                                   oninput="document.getElementById('sta-country-size-val').textContent=this.value">
+                            <span id="sta-country-size-val"><?php echo (int) $s['country_size']; ?></span>px
+                        </div>
+
+                        <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:20px;margin-bottom:16px;">
+                            <h3 style="margin-top:0;">Deel-knop (profielpagina)</h3>
+                            <p style="margin:0 0 10px;font-size:12px;color:#666;">De knop "Share profile card". Zichtbaar als de module Share card aan staat en is ingesteld.</p>
+
+                            <label style="display:block;margin-bottom:4px;font-weight:600;font-size:13px;">Tekst</label>
+                            <input type="text" name="sta_layout[share_btn_text]" maxlength="40" style="width:100%;"
+                                   value="<?php echo esc_attr($s['share_btn_text']); ?>" placeholder="Share profile card">
+
+                            <label style="display:block;margin-top:12px;margin-bottom:4px;font-weight:600;font-size:13px;">Achtergrondkleur</label>
+                            <input type="color" name="sta_layout[share_btn_bg]"
+                                   value="<?php echo esc_attr($s['share_btn_bg']); ?>">
+
+                            <label style="display:block;margin-top:12px;margin-bottom:4px;font-weight:600;font-size:13px;">Tekstkleur</label>
+                            <input type="color" name="sta_layout[share_btn_color]"
+                                   value="<?php echo esc_attr($s['share_btn_color']); ?>">
+
+                            <label style="display:block;margin-top:12px;margin-bottom:4px;font-weight:600;font-size:13px;">Afronding (px)</label>
+                            <input type="range" name="sta_layout[share_btn_radius]" min="0" max="50"
+                                   value="<?php echo (int) $s['share_btn_radius']; ?>" style="width:100%;"
+                                   oninput="document.getElementById('sta-share-radius-val').textContent=this.value">
+                            <span id="sta-share-radius-val"><?php echo (int) $s['share_btn_radius']; ?></span>px
                         </div>
 
                         <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:20px;margin-bottom:16px;">

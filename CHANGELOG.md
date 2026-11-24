@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.0
+- Pagina-opmaak, profielpagina: naam-badge (tekstkleur, tekstgrootte), vlag (vorm volgt de bestaande vlag-instelling, nieuwe grootte), landnaam (tonen/verbergen, kleur, grootte) en deel-knop (tekst, achtergrond, tekstkleur, afronding) zijn instelbaar. Standaardwaarden zijn gelijk aan het oude uiterlijk.
+- De deel-knop op de profielpagina verschijnt alleen als de module Share card aan staat.
+
 ## 1.7.1
 - Updater: een verouderd "nieuwe versie beschikbaar"-bericht voor de reeds geïnstalleerde versie (bijv. na handmatig uploaden) wordt niet meer getoond.
 

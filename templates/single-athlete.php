@@ -11,7 +11,29 @@ $_layout = array_merge([
     'club_badge_radius' => 16,
     'dist_badge_bg'     => '#0d2d63',
     'dist_badge_radius' => 50,
+    'flag_shape'        => 'circle',
+    'name_badge_color'  => '#ffffff',
+    'name_badge_size'   => 34,
+    'flag_profile_size' => 46,
+    'country_show'      => 1,
+    'country_color'     => '#555555',
+    'country_size'      => 44,
+    'share_btn_bg'      => '#13315c',
+    'share_btn_color'   => '#ffffff',
+    'share_btn_radius'  => 50,
+    'share_btn_text'    => 'Share profile card',
 ], get_option('sta_layout', []));
+$_name_color    = sanitize_hex_color( $_layout['name_badge_color'] ) ?: '#ffffff';
+$_name_size     = max( 14, min( 80, (int) $_layout['name_badge_size'] ) );
+$_flag_size     = max( 16, min( 120, (int) $_layout['flag_profile_size'] ) );
+$_flag_radius   = [ 'circle' => '50%', 'rounded' => '8px', 'square' => '0' ][ $_layout['flag_shape'] ] ?? '50%';
+$_country_show  = ! empty( $_layout['country_show'] );
+$_country_color = sanitize_hex_color( $_layout['country_color'] ) ?: '#555555';
+$_country_size  = max( 12, min( 90, (int) $_layout['country_size'] ) );
+$_share_bg      = sanitize_hex_color( $_layout['share_btn_bg'] ) ?: '#13315c';
+$_share_color   = sanitize_hex_color( $_layout['share_btn_color'] ) ?: '#ffffff';
+$_share_radius  = max( 0, min( 50, (int) $_layout['share_btn_radius'] ) );
+$_share_text    = trim( (string) $_layout['share_btn_text'] ) !== '' ? (string) $_layout['share_btn_text'] : 'Share profile card';
 $_badge_bg          = esc_attr($_layout['name_badge_bg']);
 $_badge_radius      = (int)$_layout['name_badge_radius'];
 $_club_badge_bg     = esc_attr($_layout['club_badge_bg']);
@@ -113,10 +135,10 @@ $countries = array(
                         <div style="
             margin-top:64px;
                             background:<?php echo $_badge_bg; ?>;
-                            color:#fff;
+                            color:<?php echo $_name_color; ?>;
                             padding:14px 22px 14px 30px;
                             border-radius:<?php echo $_badge_radius; ?>px;
-                            font-size:34px;
+                            font-size:<?php echo $_name_size; ?>px;
                             font-weight:700;
                             text-transform:uppercase;
                             line-height:1;
@@ -133,9 +155,9 @@ $countries = array(
                                     src="https://hatscripts.github.io/circle-flags/flags/<?php echo esc_attr( strtolower( $country_code ) ); ?>.svg"
                                     alt="<?php echo esc_attr( $countries[$country_code] ); ?>"
                                     style="
-                                        width:46px;
-                                        height:46px;
-                                        border-radius:50%;
+                                        width:<?php echo $_flag_size; ?>px;
+                                        height:<?php echo $_flag_size; ?>px;
+                                        border-radius:<?php echo $_flag_radius; ?>;
                                         display:block;
                                     "
                                 >
@@ -144,11 +166,12 @@ $countries = array(
 
                         </div>
 
-                        <?php if ( $country_code && isset( $countries[$country_code] ) ) : ?>
+                        <?php if ( $_country_show && $country_code && isset( $countries[$country_code] ) ) : ?>
 
                             <div style="
             margin-top:64px;
-                                font-size:44px;
+                                color:<?php echo $_country_color; ?>;
+                                font-size:<?php echo $_country_size; ?>px;
                                 font-weight:700;
                                 line-height:1.1;
                             ">
@@ -514,7 +537,7 @@ $countries = array(
 
         <?php
         $sc_settings  = get_option( 'sta_sharecard', [] );
-        if ( ! empty( $sc_settings['bg_id'] ) && ! empty( $sc_settings['enabled'] ) ) :
+        if ( STA_Modules::is_active( 'sharecard' ) && ! empty( $sc_settings['bg_id'] ) && ! empty( $sc_settings['enabled'] ) ) :
             $sc_post_id   = get_the_ID();
             $sc_card_url  = rest_url( 'sta/v1/share-card/' . $sc_post_id );
             $sc_page_url  = get_permalink( $sc_post_id );
@@ -547,13 +570,13 @@ $countries = array(
             <button id="btn-share-card"
                     onclick="staShareCard()"
                     style="display:inline-flex;align-items:center;gap:9px;
-                           background:#13315c;color:#fff;border:none;cursor:pointer;
-                           padding:14px 28px;border-radius:50px;font-size:15px;
+                           background:<?php echo $_share_bg; ?>;color:<?php echo $_share_color; ?>;border:none;cursor:pointer;
+                           padding:14px 28px;border-radius:<?php echo $_share_radius; ?>px;font-size:15px;
                            font-weight:700;font-family:inherit;transition:opacity .15s;"
                     onmouseover="this.style.opacity='.85'"
                     onmouseout="this.style.opacity='1'">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                Share profile card
+                <?php echo esc_html( $_share_text ); ?>
             </button>
             <p id="share-card-status" style="font-size:13px;color:#999;margin-top:8px;display:none;"></p>
         </div>
