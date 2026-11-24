@@ -47,9 +47,9 @@ class STA_Admin_Heroshot {
             wp_send_json_error('Geen Heroshot-sleutel ingesteld. Vul hem in bij WP Splashconnect → Instellingen → Heroshot.');
         }
 
-        $data_dir = ABSPATH . 'DQR2026/data/';
+        $data_dir = STA_Heroshot_Paths::dir( 'data' );
         if (!is_dir($data_dir) && !mkdir($data_dir, 0755, true)) {
-            wp_send_json_error('Map DQR2026/data/ kan niet aangemaakt worden.');
+            wp_send_json_error('Map ' . STA_Heroshot_Paths::relative() . '/data/ kan niet aangemaakt worden.');
         }
 
         global $wpdb;
@@ -129,7 +129,7 @@ class STA_Admin_Heroshot {
              ORDER BY p.post_title ASC"
         );
 
-        $video_dir      = ABSPATH . 'DQR2026/videos/';
+        $video_dir      = STA_Heroshot_Paths::dir( 'videos' );
         $with_video     = []; // publiek (.public bestand aanwezig)
         $recorded_video = []; // opgenomen maar niet publiek (alleen .mp4)
         $without_video  = []; // helemaal geen video
@@ -162,7 +162,7 @@ class STA_Admin_Heroshot {
 
             <div style="margin-bottom:24px;padding:16px 20px;background:#fff;border:1px solid #ddd;border-radius:8px;max-width:560px;">
                 <strong style="display:block;margin-bottom:6px;">Koppel DQR2026 data aan WordPress-atleten</strong>
-                <p style="margin:0 0 12px;font-size:13px;color:#555;">Leest alle bestanden in <code>DQR2026/data/</code> en vult <code>wp_url</code> en <code>post_id</code> in op basis van naam. Vereist voor publieke profiellink, heroshot openbaar zetten en naamopnames.</p>
+                <p style="margin:0 0 12px;font-size:13px;color:#555;">Leest alle bestanden in <code><?php echo esc_html( STA_Heroshot_Paths::relative() ); ?>/data/</code> en vult <code>wp_url</code> en <code>post_id</code> in op basis van naam. Vereist voor publieke profiellink, heroshot openbaar zetten en naamopnames.</p>
                 <button id="sta-link-dqr2026" class="button button-primary">Atleten koppelen aan DQR2026</button>
                 <span id="sta-link-dqr2026-result" style="margin-left:12px;font-size:13px;"></span>
             </div>

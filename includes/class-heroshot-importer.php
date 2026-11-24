@@ -23,7 +23,7 @@ class STA_Heroshot_Importer {
             return new WP_Error( 'invalid_format', 'CSV mist verplichte kolommen "Full Name" of "URL".' );
         }
 
-        $data_dir = ABSPATH . 'EST2026/data/';
+        $data_dir = STA_Heroshot_Paths::dir( 'data' );
         if ( ! is_dir( $data_dir ) ) {
             wp_mkdir_p( $data_dir );
         }

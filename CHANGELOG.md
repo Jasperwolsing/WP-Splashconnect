@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.0
+- Heroshot: de map voor `videos/` en `data/` is instelbaar bij Instellingen → Heroshot (standaard `DQR2026`), met statuscontrole. Vaste mappen `DQR2026/` en `EST2026/` zijn uit de code.
+- Video op de atletenpagina verschijnt alleen als de Heroshot-module aan staat.
+
 ## 1.3.2
 - Heroshot-sleutel is nu in te vullen bij Instellingen → Heroshot (wachtwoordveld, nooit voorgevuld; leeg laten behoudt de waarde). `STA_HEROSHOT_SECRET` in wp-config.php blijft voorrang houden.
 

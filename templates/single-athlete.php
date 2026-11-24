@@ -494,10 +494,10 @@ $countries = array(
         <?php
         $hs_id   = get_post_meta( get_the_ID(), 'sta_heroshot_id',   true );
         $hs_hash = get_post_meta( get_the_ID(), 'sta_heroshot_hash', true );
-        if ( $hs_id && $hs_hash ) :
-            $hs_flag = ABSPATH . 'DQR2026/videos/' . $hs_hash . '.public';
+        if ( $hs_id && $hs_hash && STA_Modules::is_active( 'heroshot' ) ) :
+            $hs_flag = STA_Heroshot_Paths::dir( 'videos' ) . $hs_hash . '.public';
             if ( file_exists( $hs_flag ) ) :
-                $hs_url = home_url( '/DQR2026/videos/' ) . rawurlencode( $hs_hash ) . '.mp4';
+                $hs_url = STA_Heroshot_Paths::url( 'videos' ) . rawurlencode( $hs_hash ) . '.mp4';
         ?>
         <div style="margin-top:56px;text-align:center;">
             <h3 style="font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0d2d63;margin-bottom:16px;">Heroshot video</h3>

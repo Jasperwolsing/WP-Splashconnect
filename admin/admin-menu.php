@@ -78,6 +78,12 @@ class STA_Admin_Menu {
             register_setting( 'sta_settings', 'sta_flickr_api_key',      [ 'sanitize_callback' => 'sanitize_text_field' ] );
             register_setting( 'sta_settings', 'sta_flickr_username',    [ 'sanitize_callback' => 'sanitize_text_field', 'default' => 'kjvoverbeeke' ] );
         }
+        if ( STA_Modules::is_active( 'heroshot' ) ) {
+            register_setting( 'sta_settings', STA_Heroshot_Paths::OPTION, [
+                'sanitize_callback' => [ 'STA_Heroshot_Paths', 'sanitize' ],
+                'default'           => STA_Heroshot_Paths::DEFAULT,
+            ] );
+        }
         // Heroshot-sleutel: alleen met module aan; leeg veld behoudt de bestaande waarde (veld wordt nooit voorgevuld).
         if ( STA_Modules::is_active( 'heroshot' ) && ! ( defined( 'STA_HEROSHOT_SECRET' ) && STA_HEROSHOT_SECRET ) ) {
             register_setting( 'sta_settings', 'sta_heroshot_secret', [
@@ -652,6 +658,39 @@ class STA_Admin_Menu {
                 <div class="sta-card">
                     <h2>Heroshot</h2>
                     <table class="form-table">
+                        <tr>
+                            <th><label for="sta_heroshot_dir">Map voor Heroshot-bestanden</label></th>
+                            <td>
+                                <code><?php echo esc_html( untrailingslashit( ABSPATH ) ); ?>/</code>
+                                <input type="text" id="sta_heroshot_dir" name="sta_heroshot_dir"
+                                       value="<?php echo esc_attr( STA_Heroshot_Paths::relative() ); ?>"
+                                       class="regular-text" placeholder="<?php echo esc_attr( STA_Heroshot_Paths::DEFAULT ); ?>">
+                                <p class="description">
+                                    Pad ten opzichte van de hoofdmap van de site. Alleen letters, cijfers, <code>-</code> en <code>_</code>; submappen met <code>/</code> (bijvoorbeeld <code>media/heroshot</code>).
+                                    Daarbinnen gebruikt de plugin <code>videos/</code> (de mp4-bestanden) en <code>data/</code> (koppelbestanden).
+                                </p>
+                                <?php
+                                $hs_videos = STA_Heroshot_Paths::dir( 'videos' );
+                                $hs_data   = STA_Heroshot_Paths::dir( 'data' );
+                                $hs_n      = is_dir( $hs_videos ) ? count( glob( $hs_videos . '*.mp4' ) ?: [] ) : 0;
+                                ?>
+                                <p class="description">
+                                    Huidige status:
+                                    <?php if ( is_dir( $hs_videos ) ) : ?>
+                                        <span style="color:#1a7f37;">✓ <code>videos/</code> gevonden (<?php echo (int) $hs_n; ?> mp4-bestanden)</span>
+                                    <?php else : ?>
+                                        <span style="color:#b32d2e;">✗ <code>videos/</code> bestaat niet</span>
+                                    <?php endif; ?>
+                                    ·
+                                    <?php if ( is_dir( $hs_data ) ) : ?>
+                                        <span style="color:#1a7f37;">✓ <code>data/</code> gevonden</span>
+                                    <?php else : ?>
+                                        <span style="color:#996800;"><code>data/</code> wordt aangemaakt bij het koppelen</span>
+                                    <?php endif; ?>
+                                </p>
+                                <p class="description"><strong>Verplaats of hernoem de map zelf op de server</strong> als je dit wijzigt; de plugin verplaatst geen bestanden. Staat de nieuwe map er niet, dan verdwijnen de video's van de atletenpagina's.</p>
+                            </td>
+                        </tr>
                         <tr>
                             <th><label for="sta_heroshot_secret">Heroshot-sleutel</label></th>
                             <td>
