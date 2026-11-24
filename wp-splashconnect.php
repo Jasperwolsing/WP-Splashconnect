@@ -3,7 +3,7 @@
  * Plugin Name: WP Splashconnect
  * Plugin URI:  https://github.com/Jasperwolsing/WP-Splashconnect
  * Description: Koppelt zwemwedstrijden aan WordPress: importeer atleten uit een PDF-inschrijflijst, vind Flickr-foto's, genereer AI-bio's en toon programma, uitslagen en sharecards.
- * Version:     1.1.0
+ * Version:     1.2.0
  * Author:      Jasper Wolsing
  * License:     GPL-3.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'STA_VERSION', '1.1.0' );
+define( 'STA_VERSION', '1.2.0' );
 define( 'STA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'STA_URL', plugin_dir_url( __FILE__ ) );
 
@@ -24,6 +24,7 @@ define( 'STA_URL', plugin_dir_url( __FILE__ ) );
 require_once STA_DIR . 'includes/class-github-updater.php';
 STA_GitHub_Updater::init( __FILE__ );
 
+require_once STA_DIR . 'includes/class-modules.php';
 require_once STA_DIR . 'includes/class-cpt-athlete.php';
 require_once STA_DIR . 'includes/class-featured-ticker.php';
 require_once STA_DIR . 'includes/class-pdf-importer.php';
@@ -64,17 +65,32 @@ add_action( 'init', [ 'STA_Featured_Ticker', 'register' ] );
 add_action( 'init', [ 'STA_Program_Shortcode', 'register' ] );
 add_action( 'admin_menu', [ 'STA_Admin_Menu', 'register' ] );
 add_action( 'plugins_loaded', [ 'STA_Admin_Program',  'register' ] );
-add_action( 'plugins_loaded', [ 'STA_Admin_Speakers', 'register' ] );
-STA_Admin_Sharecard::register();
-STA_Admin_Livestream::register();
+
+// Optionele modules: alleen registreren (menu, AJAX, shortcodes, cron) als ze aan staan.
+STA_Modules::init();
+if ( STA_Modules::is_active( 'speakers' ) ) {
+    add_action( 'plugins_loaded', [ 'STA_Admin_Speakers', 'register' ] );
+    add_action( 'plugins_loaded', [ 'STA_Speaker_Role',   'register' ] );
+}
+if ( STA_Modules::is_active( 'sharecard' ) ) {
+    STA_Admin_Sharecard::register();
+}
+if ( STA_Modules::is_active( 'livestream' ) ) {
+    STA_Admin_Livestream::register();
+}
 if ( is_admin() ) {
-    STA_Admin_Heroshot::register();
-    STA_Admin_NameRecording::register();
+    if ( STA_Modules::is_active( 'heroshot' ) ) {
+        STA_Admin_Heroshot::register();
+    }
+    if ( STA_Modules::is_active( 'namerecording' ) ) {
+        STA_Admin_NameRecording::register();
+    }
+    if ( STA_Modules::is_active( 'photos' ) ) {
+        STA_Admin_FotoIntegratie::register();
+    }
     STA_Admin_Layout::register();
-    STA_Admin_FotoIntegratie::register();
     STA_Admin_SwimRankings::register();
 }
-add_action( 'plugins_loaded', [ 'STA_Speaker_Role',   'register' ] );
 add_action( 'admin_enqueue_scripts', 'sta_admin_assets' );
 
 function sta_admin_assets( $hook ) {
@@ -302,7 +318,7 @@ function sta_ajax_enrich_athlete() {
     }
 
     $post_id    = intval( $_POST['post_id'] ?? 0 );
-    $skip_photo = ! empty( $_POST['skip_photo'] );
+    $skip_photo = ! empty( $_POST['skip_photo'] ) || ! STA_Modules::is_active( 'photos' );
     $skip_bio   = ! empty( $_POST['skip_bio'] );
     if ( ! $post_id ) {
         wp_send_json_error( 'Ongeldig post ID.' );
@@ -426,6 +442,7 @@ add_action( 'wp_ajax_sta_find_photos', 'sta_ajax_find_photos' );
 function sta_ajax_find_photos() {
     check_ajax_referer( 'sta_nonce', 'nonce' );
     if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( 'Geen toegang.' );
+    if ( ! STA_Modules::is_active( 'photos' ) ) wp_send_json_error( 'De module Foto-integratie staat uit.' );
 
     $post_id  = intval( $_POST['post_id'] ?? 0 );
     $max      = min( 50, max( 1, intval( $_POST['max'] ?? 5 ) ) );

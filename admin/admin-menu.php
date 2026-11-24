@@ -8,9 +8,19 @@ class STA_Admin_Menu {
             'WP Splashconnect',
             'edit_posts',
             'swimming-trials-ai',
-            [ __CLASS__, 'render_main_or_redirect' ],
+            [ 'STA_Modules', 'render' ],
             'dashicons-swimming',
             30
+        );
+
+        // Eerste submenu-item hernoemen van "WP Splashconnect" naar "Overzicht".
+        add_submenu_page(
+            'swimming-trials-ai',
+            'WP Splashconnect – overzicht en modules',
+            'Overzicht',
+            'edit_posts',
+            'swimming-trials-ai',
+            [ 'STA_Modules', 'render' ]
         );
 
         add_submenu_page(
@@ -22,23 +32,27 @@ class STA_Admin_Menu {
             [ __CLASS__, 'render_enrich_page' ]
         );
 
-        add_submenu_page(
-            'swimming-trials-ai',
-            'Heroshot video-koppeling',
-            'Heroshot video',
-            'manage_options',
-            'swimming-trials-heroshot',
-            [ 'STA_Admin_Heroshot', 'render' ]
-        );
+        if ( STA_Modules::is_active( 'heroshot' ) ) {
+            add_submenu_page(
+                'swimming-trials-ai',
+                'Heroshot video-koppeling',
+                'Heroshot video',
+                'manage_options',
+                'swimming-trials-heroshot',
+                [ 'STA_Admin_Heroshot', 'render' ]
+            );
+        }
 
-        add_submenu_page(
-            'swimming-trials-ai',
-            'Share card – template editor',
-            'Share card',
-            'manage_options',
-            'swimming-trials-sharecard',
-            [ 'STA_Admin_Sharecard', 'render' ]
-        );
+        if ( STA_Modules::is_active( 'sharecard' ) ) {
+            add_submenu_page(
+                'swimming-trials-ai',
+                'Share card – template editor',
+                'Share card',
+                'manage_options',
+                'swimming-trials-sharecard',
+                [ 'STA_Admin_Sharecard', 'render' ]
+            );
+        }
         add_submenu_page(
             'swimming-trials-ai',
             'Instellingen',
@@ -58,8 +72,12 @@ class STA_Admin_Menu {
 
     public static function register_settings() {
         register_setting( 'sta_settings', 'sta_anthropic_api_key',  [ 'sanitize_callback' => 'sanitize_text_field' ] );
-        register_setting( 'sta_settings', 'sta_flickr_api_key',      [ 'sanitize_callback' => 'sanitize_text_field' ] );
-        register_setting( 'sta_settings', 'sta_flickr_username',    [ 'sanitize_callback' => 'sanitize_text_field', 'default' => 'kjvoverbeeke' ] );
+        // Flickr-velden alleen registreren als de module aan staat; anders zou options.php
+        // de (verborgen, dus niet meegestuurde) waarden bij het opslaan wissen.
+        if ( STA_Modules::is_active( 'photos' ) ) {
+            register_setting( 'sta_settings', 'sta_flickr_api_key',      [ 'sanitize_callback' => 'sanitize_text_field' ] );
+            register_setting( 'sta_settings', 'sta_flickr_username',    [ 'sanitize_callback' => 'sanitize_text_field', 'default' => 'kjvoverbeeke' ] );
+        }
         register_setting( 'sta_settings', 'sta_serper_api_key',    [ 'sanitize_callback' => 'sanitize_text_field' ] );
         register_setting( 'sta_settings', 'sta_bio_prompt',        [ 'sanitize_callback' => 'sanitize_textarea_field' ] );
         register_setting( 'sta_settings', 'sta_fallback_photo_m',  [ 'sanitize_callback' => 'absint' ] );
@@ -122,7 +140,7 @@ class STA_Admin_Menu {
                     </label>
                     <span class="sta-toolbar-sep">|</span>
                     <label style="font-weight:normal;cursor:pointer;" title="Zoek een Flickr-foto voor elke atleet">
-                        <input type="checkbox" id="sta-opt-photo" checked> Foto zoeken
+                        <input type="checkbox" id="sta-opt-photo" <?php echo STA_Modules::is_active( 'photos' ) ? 'checked' : 'disabled title="Module Foto-integratie staat uit"'; ?>> Foto zoeken
                     </label>
                     <label style="font-weight:normal;cursor:pointer;margin-left:10px;" title="Genereer een AI-bio voor elke atleet">
                         <input type="checkbox" id="sta-opt-bio" checked> Bio genereren
@@ -263,10 +281,12 @@ class STA_Admin_Menu {
                                         Context
                                     </button>
                                     <?php if ( get_option('sta_tournament_tag') ) : ?>
-                                    <button class="button sta-flickr-photos-btn"
+                                    <?php $photos_on = STA_Modules::is_active( 'photos' ); ?>
+                                    <button class="button <?php echo $photos_on ? 'sta-flickr-photos-btn' : ''; ?>"
                                             data-id="<?php echo $athlete->ID; ?>"
                                             data-name="<?php echo esc_attr( $athlete->post_title ); ?>"
-                                            title="Toernooifoto's zoeken en instellen">
+                                            <?php echo $photos_on ? '' : 'disabled'; ?>
+                                            title="<?php echo $photos_on ? "Toernooifoto's zoeken en instellen" : 'Module Foto-integratie staat uit'; ?>">
                                         📷 Foto's
                                     </button>
                                     <?php endif; ?>
@@ -572,6 +592,7 @@ class STA_Admin_Menu {
                                 <p class="description">Verplicht. Haal je sleutel op via <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></p>
                             </td>
                         </tr>
+                        <?php if ( STA_Modules::is_active( 'photos' ) ) : ?>
                         <tr>
                             <th><label for="sta_flickr_api_key">Flickr API-sleutel</label></th>
                             <td>
@@ -596,6 +617,7 @@ class STA_Admin_Menu {
                                 </p>
                             </td>
                         </tr>
+                        <?php endif; ?>
                         <tr>
                             <th><label for="sta_serper_api_key">Serper.dev API-sleutel <em>(optioneel)</em></label></th>
                             <td>

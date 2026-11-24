@@ -842,7 +842,7 @@ class STA_Admin_FotoIntegratie {
 
         <?php if ( $active_tab === 'fallback' ) : ?>
         <?php if ( empty( $all_fb_ids ) ) : ?>
-        <div class="sta-card"><p style="color:#c00;">Stel eerst een fallback foto in via <a href="<?php echo admin_url('admin.php?page=swimming-trials-ai'); ?>">Instellingen → Fallback foto</a>.</p></div>
+        <div class="sta-card"><p style="color:#c00;">Stel eerst een fallback foto in via <a href="<?php echo admin_url('admin.php?page=swimming-trials-settings'); ?>">Instellingen → Fallback foto</a>.</p></div>
         <?php elseif ( empty( $athletes_with_fallback ) ) : ?>
         <div class="sta-card"><p style="color:#666;">Geen atleten met fallback foto gevonden. Atleten krijgen de fallback na het uitvoeren van "Verrijk atleten" wanneer er geen Flickr-foto beschikbaar is.</p></div>
         <?php else :
