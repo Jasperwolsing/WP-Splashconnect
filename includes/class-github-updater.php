@@ -17,7 +17,7 @@ class STA_GitHub_Updater {
     const SLUG      = 'wp-splashconnect';
     const ASSET     = 'wp-splashconnect.zip';
     const CACHE_KEY = 'sta_github_release';
-    const CACHE_TTL = 6 * HOUR_IN_SECONDS;
+    const CACHE_TTL = HOUR_IN_SECONDS;
 
     private static string $plugin_file;   // plugin_basename, bv. wp-splashconnect/wp-splashconnect.php
 
@@ -30,6 +30,11 @@ class STA_GitHub_Updater {
         add_action( 'upgrader_process_complete',            [ __CLASS__, 'clear_cache' ], 10, 0 );
         // Bij het lezen: een verouderd "update beschikbaar" voor de reeds geïnstalleerde versie opruimen.
         add_filter( 'site_transient_update_plugins',         [ __CLASS__, 'drop_stale_update' ] );
+
+        add_action( 'load-update-core.php',                  [ __CLASS__, 'maybe_force_check' ] );
+        add_action( 'load-plugins.php',                      [ __CLASS__, 'maybe_force_check' ] );
+        add_filter( 'plugin_action_links_' . self::$plugin_file, [ __CLASS__, 'action_links' ] );
+        add_action( 'admin_post_sta_check_update',           [ __CLASS__, 'handle_check_update' ] );
     }
 
     /**
@@ -64,36 +69,39 @@ class STA_GitHub_Updater {
             ]
         );
 
-        if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-            // Kort cachen om GitHub niet te hameren bij storingen of rate limits.
-            set_transient( self::CACHE_KEY, [], 30 * MINUTE_IN_SECONDS );
-            return null;
+        $data = null;
+        if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+            $data = json_decode( wp_remote_retrieve_body( $response ), true );
         }
 
-        $data = json_decode( wp_remote_retrieve_body( $response ), true );
-        if ( empty( $data['tag_name'] ) ) {
-            set_transient( self::CACHE_KEY, [], 30 * MINUTE_IN_SECONDS );
-            return null;
-        }
+        if ( is_array( $data ) && ! empty( $data['tag_name'] ) ) {
+            $package = '';
+            foreach ( (array) ( $data['assets'] ?? [] ) as $asset ) {
+                if ( ( $asset['name'] ?? '' ) === self::ASSET && ! empty( $asset['browser_download_url'] ) ) {
+                    $package = $asset['browser_download_url'];
+                    break;
+                }
+            }
+            if ( ! $package ) {
+                $package = $data['zipball_url'] ?? '';
+            }
 
-        $package = '';
-        foreach ( (array) ( $data['assets'] ?? [] ) as $asset ) {
-            if ( ( $asset['name'] ?? '' ) === self::ASSET && ! empty( $asset['browser_download_url'] ) ) {
-                $package = $asset['browser_download_url'];
-                break;
+            $release = [
+                'version'   => ltrim( (string) $data['tag_name'], 'vV' ),
+                'package'   => $package,
+                'url'       => $data['html_url'] ?? 'https://github.com/' . self::REPO,
+                'changelog' => (string) ( $data['body'] ?? '' ),
+                'published' => $data['published_at'] ?? '',
+            ];
+        } else {
+            // De GitHub-API weigert regelmatig aanvragen vanaf gedeelde hosting-IP's (rate limit).
+            // Terugval: de gewone website-redirect /releases/latest heeft die limiet niet.
+            $release = self::latest_release_via_web();
+            if ( ! $release ) {
+                set_transient( self::CACHE_KEY, [], 10 * MINUTE_IN_SECONDS );
+                return null;
             }
         }
-        if ( ! $package ) {
-            $package = $data['zipball_url'] ?? '';
-        }
-
-        $release = [
-            'version'   => ltrim( (string) $data['tag_name'], 'vV' ),
-            'package'   => $package,
-            'url'       => $data['html_url'] ?? 'https://github.com/' . self::REPO,
-            'changelog' => (string) ( $data['body'] ?? '' ),
-            'published' => $data['published_at'] ?? '',
-        ];
 
         // Alleen https-pakketten van github.com accepteren.
         $host = wp_parse_url( $release['package'], PHP_URL_HOST );
@@ -105,6 +113,61 @@ class STA_GitHub_Updater {
 
         set_transient( self::CACHE_KEY, $release, self::CACHE_TTL );
         return $release;
+    }
+
+    /** Leest de laatste tag uit de redirect van github.com/<repo>/releases/latest (geen API, geen token). */
+    private static function latest_release_via_web(): ?array {
+        $response = wp_remote_head(
+            'https://github.com/' . self::REPO . '/releases/latest',
+            [
+                'timeout'     => 10,
+                'redirection' => 0,
+                'headers'     => [ 'User-Agent' => 'WP-Splashconnect-Updater' ],
+            ]
+        );
+        if ( is_wp_error( $response ) ) {
+            return null;
+        }
+        $location = (string) wp_remote_retrieve_header( $response, 'location' );
+        if ( ! preg_match( '#/releases/tag/(v?\d+\.\d+\.\d+)$#', $location, $m ) ) {
+            return null;
+        }
+        $tag = $m[1];
+        return [
+            'version'   => ltrim( $tag, 'vV' ),
+            'package'   => 'https://github.com/' . self::REPO . '/releases/download/' . $tag . '/' . self::ASSET,
+            'url'       => 'https://github.com/' . self::REPO . '/releases/tag/' . $tag,
+            'changelog' => '',
+            'published' => '',
+        ];
+    }
+
+    /** "Opnieuw controleren" van WordPress moet ook onze eigen cache legen. */
+    public static function maybe_force_check(): void {
+        if ( isset( $_GET['force-check'] ) ) {
+            delete_transient( self::CACHE_KEY );
+        }
+    }
+
+    /** Link "Controleer op updates" in de pluginlijst. */
+    public static function action_links( array $links ): array {
+        if ( current_user_can( 'update_plugins' ) ) {
+            $url = wp_nonce_url( admin_url( 'admin-post.php?action=sta_check_update' ), 'sta_check_update' );
+            $links[] = '<a href="' . esc_url( $url ) . '">Controleer op updates</a>';
+        }
+        return $links;
+    }
+
+    public static function handle_check_update(): void {
+        if ( ! current_user_can( 'update_plugins' ) ) {
+            wp_die( 'Geen toegang.', '', [ 'response' => 403 ] );
+        }
+        check_admin_referer( 'sta_check_update' );
+        delete_transient( self::CACHE_KEY );
+        delete_site_transient( 'update_plugins' );
+        wp_update_plugins();
+        wp_safe_redirect( admin_url( 'plugins.php?sta_checked=1' ) );
+        exit;
     }
 
     public static function check_update( $transient ) {

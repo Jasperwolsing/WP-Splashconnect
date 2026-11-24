@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.8.1
+- Updater betrouwbaarder: terugval op de website-redirect als de GitHub-API de aanvraag weigert (rate limit op gedeelde hosting), cache van 6 naar 1 uur, "Opnieuw controleren" in WordPress leegt nu ook de plugin-cache, en in de pluginlijst staat de link **Controleer op updates**.
+
 ## 1.8.0
 - Pagina-opmaak, profielpagina: naam-badge (tekstkleur, tekstgrootte), vlag (vorm volgt de bestaande vlag-instelling, nieuwe grootte), landnaam (tonen/verbergen, kleur, grootte) en deel-knop (tekst, achtergrond, tekstkleur, afronding) zijn instelbaar. Standaardwaarden zijn gelijk aan het oude uiterlijk.
 - De deel-knop op de profielpagina verschijnt alleen als de module Share card aan staat.
