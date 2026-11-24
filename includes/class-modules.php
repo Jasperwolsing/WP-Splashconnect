@@ -117,6 +117,11 @@ class STA_Modules {
             <?php if ( $saved ) : ?>
                 <div class="notice notice-success is-dismissible"><p>Modules opgeslagen.</p></div>
             <?php endif; ?>
+            <?php if ( isset( $_GET['sta_pages'] ) ) : $made = (int) $_GET['sta_pages']; ?>
+                <div class="notice notice-success is-dismissible"><p><?php echo $made ? esc_html( $made . ' pagina(\'s) aangemaakt.' ) : 'Er waren geen ontbrekende pagina\'s.'; ?></p></div>
+            <?php endif; ?>
+
+            <?php STA_Pages::render_card(); ?>
 
             <div class="sta-card">
                 <h2>Altijd actief</h2>

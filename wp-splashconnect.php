@@ -3,7 +3,7 @@
  * Plugin Name: WP Splashconnect
  * Plugin URI:  https://github.com/Jasperwolsing/WP-Splashconnect
  * Description: Koppelt zwemwedstrijden aan WordPress: importeer atleten uit een PDF-inschrijflijst, vind Flickr-foto's, genereer AI-bio's en toon programma, uitslagen en sharecards.
- * Version:     1.4.1
+ * Version:     1.5.0
  * Author:      Jasper Wolsing
  * License:     GPL-3.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'STA_VERSION', '1.4.1' );
+define( 'STA_VERSION', '1.5.0' );
 define( 'STA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'STA_URL', plugin_dir_url( __FILE__ ) );
 
@@ -28,6 +28,8 @@ require_once STA_DIR . 'includes/class-modules.php';
 require_once STA_DIR . 'includes/class-heroshot-paths.php';
 require_once STA_DIR . 'includes/class-templates.php';
 STA_Templates::init();
+require_once STA_DIR . 'includes/class-pages.php';
+STA_Pages::init();
 require_once STA_DIR . 'includes/class-cpt-athlete.php';
 require_once STA_DIR . 'includes/class-featured-ticker.php';
 require_once STA_DIR . 'includes/class-pdf-importer.php';

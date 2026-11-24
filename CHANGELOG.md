@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.5.0
+- Overzicht: kaart "Standaardpagina's" toont of Clubs (`/clubs/`) en Programma (`[sta_program]`) bestaan en maakt ontbrekende pagina's aan met één knop. Bestaande pagina's worden nooit gewijzigd.
+
 ## 1.4.1
 - Foto-integratie uit: foto's en placeholders (🏊) worden nergens meer getoond: afstandspagina, atletenoverzicht, clubpagina, atleetpagina (incl. toernooifoto's) en de uitgelichte-atleten-ticker. De standaardtekst onderaan de atleetpagina noemt dan alleen de bio.
 
