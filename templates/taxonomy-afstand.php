@@ -27,6 +27,7 @@ $_color       = esc_attr( $_s['primary_color'] ?? '#13315c' );
 <main id="primary" class="site-main">
 
     <div class="container" style="
+        width:100%;box-sizing:border-box;
         max-width:1000px;
         margin:0 auto;
         padding:50px 20px 80px;

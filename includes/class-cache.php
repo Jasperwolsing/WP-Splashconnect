@@ -26,6 +26,15 @@ class STA_Cache {
             add_action( 'update_option_' . $opt, [ __CLASS__, 'purge' ] );
             add_action( 'add_option_' . $opt,    [ __CLASS__, 'purge' ] );
         }
+        add_action( 'admin_init', [ __CLASS__, 'purge_after_update' ] );
+    }
+
+    /** Eenmalig legen na een plugin-update, zodat bezoekers de nieuwe sjablonen zien. */
+    public static function purge_after_update(): void {
+        if ( get_option( 'sta_cache_version' ) !== STA_VERSION ) {
+            update_option( 'sta_cache_version', STA_VERSION );
+            self::purge();
+        }
     }
 
     public static function purge(): void {

@@ -62,7 +62,7 @@ usort( $club_terms, function( $a, $b ) use ( $club_medals ) {
 <?php endif; ?>
 
 <main id="primary" class="site-main">
-<div class="container" style="max-width:900px;margin:0 auto;padding:50px 20px 80px;">
+<div class="container" style="width:100%;box-sizing:border-box;max-width:900px;margin:0 auto;padding:50px 20px 80px;">
 
     <h1 style="font-size:32px;font-weight:800;color:<?php echo $color; ?>;text-align:center;margin:0 0 8px;">Clubs</h1>
     <p style="text-align:center;color:#888;margin:0 0 16px;font-size:14px;"><?php echo count( $club_terms ); ?> clubs on the start list</p>
@@ -73,7 +73,16 @@ usort( $club_terms, function( $a, $b ) use ( $club_medals ) {
     <?php else : ?>
 
     <div style="overflow-x:auto;border:1px solid #e0e7f0;border-radius:<?php echo $card_radius; ?>px;">
-    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+    <style>
+    @media (max-width:600px){
+        .sta-medal-table th,.sta-medal-table td{padding:8px 3px !important;width:auto !important;font-size:12px !important}
+        .sta-medal-table th:first-child,.sta-medal-table td:first-child{padding-left:6px !important}
+        .sta-medal-table th:last-child,.sta-medal-table td:last-child{padding-right:6px !important}
+        .sta-medal-table td a{gap:6px !important;overflow-wrap:anywhere}
+        .sta-medal-table .sta-club-logo{display:none !important}
+    }
+    </style>
+    <table class="sta-medal-table" style="width:100%;border-collapse:collapse;font-size:14px;">
         <thead>
             <tr style="background:#f8f9fb;border-bottom:2px solid #e0e7f0;">
                 <th style="padding:10px 14px;text-align:left;font-weight:700;color:#13315C;width:32px;">#</th>
@@ -102,7 +111,7 @@ usort( $club_terms, function( $a, $b ) use ( $club_medals ) {
             <td style="padding:10px 14px;font-weight:700;color:#aaa;font-size:12px;"><?php echo $rank; ?></td>
             <td style="padding:10px 14px;">
                 <a href="<?php echo esc_url( $club_url ); ?>" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;">
-                    <div style="background:<?php echo $color; ?>;border-radius:6px;padding:6px 8px;display:flex;align-items:center;justify-content:center;width:48px;height:36px;flex-shrink:0;box-sizing:border-box;">
+                    <div class="sta-club-logo" style="background:<?php echo $color; ?>;border-radius:6px;padding:6px 8px;display:flex;align-items:center;justify-content:center;width:48px;height:36px;flex-shrink:0;box-sizing:border-box;">
                         <?php if ( $logo ) : ?>
                         <img src="<?php echo esc_url( $logo ); ?>" style="max-height:24px;max-width:36px;width:auto;object-fit:contain;" onerror="this.style.display='none'">
                         <?php endif; ?>

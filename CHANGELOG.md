@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.1
+- Mobiel: pagina's (afstand, atleet, atletenoverzicht, club, clubs) waren op thema's met een vaste `.container`-breedte (o.a. Total) tot 1000 px breed, waardoor de helft wegviel. Ze passen nu op de schermbreedte.
+- Mobiel: de medaillespiegel op het clubs-overzicht is compacter (zonder logo's) en past op het scherm.
+- Paginacache wordt na een plugin-update eenmalig geleegd.
+
 ## 1.9.0
 - Menu-item heeft nu een zwemmer-icoon (SVG, kleurt mee met het admin-kleurenschema). Het eerdere `dashicons-swimming` bestaat niet in WordPress, waardoor er geen icoon was.
 

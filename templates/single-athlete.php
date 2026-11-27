@@ -93,6 +93,7 @@ $countries = array(
 <main id="primary" class="site-main">
 
     <div class="container athlete-single" style="
+        width:100%;box-sizing:border-box;
         max-width:1000px;
         margin:0 auto;
         padding:50px 20px 80px;

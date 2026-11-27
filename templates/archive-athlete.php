@@ -89,7 +89,7 @@ unset($group);
 <?php endif; ?>
 
 <main id="primary" class="site-main">
-    <div class="container" style="max-width:1000px;margin:0 auto;padding:50px 20px 80px;">
+    <div class="container" style="width:100%;box-sizing:border-box;max-width:1000px;margin:0 auto;padding:50px 20px 80px;">
 
         <h1 style="font-size:36px;font-weight:700;color:<?php echo $color; ?>;text-align:center;margin-bottom:8px;">Athletes</h1>
         <p style="text-align:center;color:#666;margin-bottom:24px;">
